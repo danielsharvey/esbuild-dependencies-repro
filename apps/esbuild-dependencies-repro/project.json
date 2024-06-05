@@ -13,7 +13,12 @@
         "platform": "node",
         "outputPath": "dist/apps/esbuild-dependencies-repro",
         "format": ["cjs"],
-        "bundle": false,
+        "bundle": true,
+        "external": [
+          "@esbuild-dependencies-repro/mylib"
+        ],
+        "declaration": true,
+        "declarationRootDir": "apps/esbuild-dependencies-repro/src",
         "main": "apps/esbuild-dependencies-repro/src/main.ts",
         "tsConfig": "apps/esbuild-dependencies-repro/tsconfig.app.json",
         "assets": ["apps/esbuild-dependencies-repro/src/assets"],
