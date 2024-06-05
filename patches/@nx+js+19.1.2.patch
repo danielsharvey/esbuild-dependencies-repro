@@ -1,0 +1,14 @@
+diff --git a/node_modules/@nx/js/src/utils/typescript/run-type-check.js b/node_modules/@nx/js/src/utils/typescript/run-type-check.js
+index d1873e6..9cb3e72 100644
+--- a/node_modules/@nx/js/src/utils/typescript/run-type-check.js
++++ b/node_modules/@nx/js/src/utils/typescript/run-type-check.js
+@@ -57,6 +57,9 @@ async function setupTypeScript(options) {
+     const ts = await Promise.resolve().then(() => require('typescript'));
+     const { workspaceRoot, tsConfigPath, cacheDir, incremental, rootDir } = options;
+     const config = (0, ts_config_1.readTsConfig)(tsConfigPath);
++    if(options.paths) {
++      config.options.paths = options.paths;
++    }
+     if (config.errors.length) {
+         const errorMessages = config.errors.map((e) => e.messageText).join('\n');
+         throw new Error(`Invalid config file due to following: ${errorMessages}`);

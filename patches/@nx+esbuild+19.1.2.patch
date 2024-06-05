@@ -1,0 +1,36 @@
+diff --git a/node_modules/@nx/esbuild/src/executors/esbuild/esbuild.impl.js b/node_modules/@nx/esbuild/src/executors/esbuild/esbuild.impl.js
+index 98606a9..445ef1b 100644
+--- a/node_modules/@nx/esbuild/src/executors/esbuild/esbuild.impl.js
++++ b/node_modules/@nx/esbuild/src/executors/esbuild/esbuild.impl.js
+@@ -10,6 +10,7 @@ const fs_extra_1 = require("fs-extra");
+ const async_iterable_1 = require("@nx/devkit/src/utils/async-iterable");
+ const build_esbuild_options_1 = require("./lib/build-esbuild-options");
+ const get_extra_dependencies_1 = require("./lib/get-extra-dependencies");
++const _buildablelibsutils = require("@nx/js/src/utils/buildable-libs-utils");
+ const path_1 = require("path");
+ const BUILD_WATCH_FAILED = `[ ${chalk.red('watch')} ] build finished with errors (see above), watching for changes...`;
+ const BUILD_WATCH_SUCCEEDED = `[ ${chalk.green('watch')} ] build succeeded, watching for changes...`;
+@@ -161,6 +162,23 @@ function getTypeCheckOptions(options, context) {
+         typeCheckOptions.incremental = true;
+         typeCheckOptions.cacheDir = devkit_1.cacheDir;
+     }
++
++    const { dependencies } = (0, _buildablelibsutils.calculateProjectBuildableDependencies)(
++      context.taskGraph,
++      context.projectGraph,
++      context.root,
++      context.projectName,
++      // When using incremental building and the serve target is called
++      // we need to get the deps for the 'build' target instead.
++      // context.targetName === 'serve' ? 'build' : context.targetName,
++      // ^ from Vite plugin --> need to review for esbuild
++      context.targetName,
++      context.configurationName
++    );
++    const paths = (0, _buildablelibsutils.computeCompilerOptionsPaths)(typeCheckOptions.tsConfigPath, dependencies);
++    typeCheckOptions.paths = paths;
++    console.log('esbuild declarations build paths override', paths);
++
+     return typeCheckOptions;
+ }
+ async function runTypeCheck(options, context) {
